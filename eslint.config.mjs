@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The Flutter web build of the Inferstack Console is generated code.
+    "public/console/**",
   ]),
 ]);
 

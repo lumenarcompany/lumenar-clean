@@ -2,7 +2,7 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { NAV, NAV_MENUS } from '@/content/site';
+import { NAV, NAV_MENUS, isStaticPath } from '@/content/site';
 import { ArrowUpRight, Button } from './ui';
 
 /** Desktop links with hover panels, the mobile dialog, and the header's scrolled state. */
@@ -32,12 +32,17 @@ export default function HeaderMenus() {
             <Link href={n.href} className="nav-link t-nav" aria-current={current(n.href)}>{n.label}</Link>
             {NAV_MENUS[n.href] && (
               <div className="nav-panel">
-                {NAV_MENUS[n.href].map((m) => (
-                  <Link key={m.href} href={m.href} className="nav-row">
-                    <span className="block text-[14px] leading-5 font-medium text-fg">{m.title}</span>
-                    <span className="block text-[13px] leading-[19px] text-fg-3">{m.desc}</span>
-                  </Link>
-                ))}
+                {NAV_MENUS[n.href].map((m) => {
+                  const body = (
+                    <>
+                      <span className="block text-[14px] leading-5 font-medium text-fg">{m.title}</span>
+                      <span className="block text-[13px] leading-[19px] text-fg-3">{m.desc}</span>
+                    </>
+                  );
+                  return isStaticPath(m.href)
+                    ? <a key={m.href} href={m.href} className="nav-row">{body}</a>
+                    : <Link key={m.href} href={m.href} className="nav-row">{body}</Link>;
+                })}
               </div>
             )}
           </div>

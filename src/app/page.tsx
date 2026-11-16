@@ -8,7 +8,7 @@ import Hero from '@/components/sections/home/Hero';
 import HowItWorks from '@/components/sections/home/HowItWorks';
 import SessionLayer from '@/components/sections/home/SessionLayer';
 import Statement from '@/components/sections/home/Statement';
-import { AgentCatalogue, Closing, FeatureBento, Metrics, RunsOn, SoftwareTeaser } from '@/components/sections/home/blocks';
+import { AgentCatalogue, Closing, FeatureBento, Metrics, Prototype, RunsOn, SoftwareTeaser } from '@/components/sections/home/blocks';
 import { PRICING_FAQ } from '@/content/site';
 
 export default function Home() {
@@ -21,6 +21,7 @@ export default function Home() {
       <Reveal><FeatureBento /></Reveal>
       <HowItWorks />
       <Reveal><SessionLayer /></Reveal>
+      <Reveal><Prototype /></Reveal>
       <Reveal><AgentCatalogue /></Reveal>
       <Reveal><SoftwareTeaser /></Reveal>
       <Reveal>
