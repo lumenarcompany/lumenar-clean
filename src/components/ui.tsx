@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- the mark is one small static image; next/image adds nothing here */
 import Link from 'next/link';
+import { isStaticPath } from '@/content/site';
 
 /* Icons: one stroke set, drawn here so the site ships no icon package. */
 const ICONS = {
@@ -113,10 +114,10 @@ export function Button({ href, variant = 'primary', size, arrow = false, childre
   const body = variant === 'primary'
     ? <><span className="cta-label">{children}</span><span className="cta-arrow"><Icon name="arrow" size={size ? 16 : 18} /></span></>
     : <>{children}{arrow && <ArrowUpRight />}</>;
-  return href.startsWith('/') ? (
+  return href.startsWith('/') && !isStaticPath(href) ? (
     <Link href={href} className={cls}>{body}</Link>
   ) : (
-    <a href={href} className={cls} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">{body}</a>
+    <a href={href} className={cls} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}>{body}</a>
   );
 }
 

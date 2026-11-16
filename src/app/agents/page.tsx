@@ -5,7 +5,7 @@ import Shell from '@/components/Shell';
 import AgentsConsole from '@/components/mocks/AgentsConsole';
 import { AgentCard, Closing } from '@/components/sections/home/blocks';
 import { Badge, Button, Icon, PageHero, Section, SectionHead, type IconName } from '@/components/ui';
-import { AGENT_FEATURES, AGENTS, MECHANISMS, SWITCH_STEPS } from '@/content/site';
+import { AGENT_FEATURES, AGENTS, CONSOLE_HREF, MECHANISMS, SWITCH_STEPS } from '@/content/site';
 
 export const metadata: Metadata = {
   title: 'Agents',
@@ -25,6 +25,7 @@ export default function AgentsPage() {
       >
         <Button href="/contact">Request a pilot</Button>
         <Button href="#catalogue" variant="ghost">The catalogue</Button>
+        <Button href="/inferstack" variant="ghost">The gateway underneath</Button>
       </PageHero>
 
       <Section id="catalogue" className="mt-0!">
@@ -62,7 +63,10 @@ export default function AgentsPage() {
               <Fit label="The full Lumenar agents console with example data"><AgentsConsole /></Fit>
             </div>
           </div>
-          <p className="t-small mt-4 flex items-center gap-2">Sample data throughout. <Badge /></p>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+            <p className="t-small flex items-center gap-2">Sample data throughout. <Badge /></p>
+            <Button href={CONSOLE_HREF} variant="ghost" arrow>Open the live Inferstack Console</Button>
+          </div>
         </Reveal>
       </Section>
 

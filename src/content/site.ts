@@ -6,8 +6,14 @@ export const EMAIL = 'lumenar.dev@gmail.com';
 export const LINKEDIN = 'https://www.linkedin.com/company/lumenar.in/posts';
 export const LEGAL_NAME = 'Lumenar Global Pvt. Ltd.';
 
+/** The live Inferstack Console: a Flutter web build served as static files, outside the Next.js router. */
+export const CONSOLE_HREF = '/console/';
+/** Paths Next.js does not own, so they need a full page load instead of a client-side <Link>. */
+export const isStaticPath = (href: string) => href.startsWith(CONSOLE_HREF);
+
 export const NAV = [
   { href: '/agents', label: 'Agents' },
+  { href: '/inferstack', label: 'Inferstack' },
   { href: '/software', label: 'Software' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/trust', label: 'Trust' },
@@ -15,13 +21,51 @@ export const NAV = [
   { href: '/company', label: 'Company' },
 ];
 
-export const RUNS_ON = ['vLLM', 'SGLang', 'OpenAI-compatible API', 'Open models'];
+export const RUNS_ON = ['llama.cpp today', 'vLLM and SGLang next', 'OpenAI-compatible API', 'Open models'];
 
 /** Measured on Lumenar's own coding-agent logs. */
 export const METRICS = [
   { value: '99.2%', label: 'of all tokens in our own agent sessions were input, not output' },
   { value: '88.5%', label: 'of those input tokens had been sent before' },
   { value: '1.43B', label: 'prompt tokens measured across 17,780 model calls' },
+];
+
+/** Measured on the Inferstack prototype (from lumenar.in): one laptop, no GPU, the same two-turn session cold and then cached. */
+export const PROTOTYPE = [
+  { value: '87%', label: 'less served cost on the second turn, on the small model. 79.6% on the larger one.' },
+  { value: '98.3%', label: 'of the prompt came from cache on the second turn.' },
+  { value: '0.24 s', label: 'for a repeated 4,298-token prompt from cache, against 73.4 s cold.' },
+];
+export const PROTOTYPE_SETUP =
+  '8 CPU cores, 6.9 GiB RAM, Qwen2.5 0.5B and 1.5B Q4_K_M, llama.cpp b12186. Served cost is measured engine time times an hourly rate. On a GPU the absolute times fall; the cache gain is the part that does not depend on hardware.';
+
+/** What the Inferstack gateway does today. All implemented in the prototype. */
+export const INFERSTACK_FEATURES: { name: string; icon: 'cache' | 'route' | 'receipt' | 'swap' | 'gate' | 'layout' | 'plan' | 'stop'; desc: string }[] = [
+  { name: 'Keeps each session on its cache', icon: 'cache', desc: 'A session is pinned to the engine it started on, so the engine already holds the prefix and old context is not computed again.' },
+  { name: 'Picks a model for each step', icon: 'route', desc: 'Three policies: cost, balanced, quality. Under balanced, chat and extraction go to the small model; code and reasoning escalate to the large one and stay there.' },
+  { name: 'Meters what each request cost', icon: 'receipt', desc: 'Served cost is busy engine time times your hourly rate. Reference cost is the list price for the same tokens. Both are stored per request in a ledger.' },
+  { name: 'Fails over', icon: 'swap', desc: 'If the chosen engine is unhealthy or returns a retryable error, the request goes to the alternate engine and the response says so.' },
+  { name: 'Publishes eval checksums', icon: 'gate', desc: 'A fixed eval suite runs against each model. The score and the hash of the suite ship with the model metadata, so a model swap cannot go unnoticed.' },
+  { name: 'Speaks the API you already use', icon: 'layout', desc: 'Streaming and non-streaming chat completions, bearer-token auth, Prometheus metrics, and an inferstack block on every response with engine, cache hit, latency and cost.' },
+  { name: 'Runs agents and tasks for you', icon: 'plan', desc: 'Save an agent: instructions, policy, limits, an optional budget. Hand it tasks. The gateway runs them in the background and keeps the agent’s instructions in the cache between tasks.' },
+  { name: 'Caps what an agent may spend', icon: 'stop', desc: 'Each agent has its own ledger: tasks, runs, served cost, reference cost. Give it a budget in dollars and runs stop when the measured cost reaches it.' },
+];
+
+/** The three steps of the live Console. */
+export const CONSOLE_STEPS = [
+  { name: 'Connect', desc: 'Gateway URL and API key, stored on your device.' },
+  { name: 'Create an agent', desc: 'Pick Summarizer, JSON extractor, Code reviewer, Translator, Support reply, Step planner, or start blank.' },
+  { name: 'Run a task', desc: 'Paste the input, press Run. Re-run it, or run it under cost and quality side by side.' },
+];
+
+/** Why a gateway you run, instead of a frontier API. */
+export const WHY_INFERSTACK = [
+  { name: 'Your hardware, your models', desc: 'Open models served by engines you run, on a laptop today and on your GPUs next. Swap a model by editing one config block; the eval checksum tells you if quality moved.' },
+  { name: 'Cost you can audit', desc: 'Served cost is measured engine time, not a price list. Every request, session, agent and task carries it, with the list-price reference next to it.' },
+  { name: 'Instructions paid once', desc: 'An agent’s instructions are the cached prefix of all its tasks. Hosted caches expire in minutes; here the cache is yours and the ledger shows the hit rate.' },
+  { name: 'Budgets per agent, not per account', desc: 'A runaway agent stops at the dollar amount you set for it. The others keep working.' },
+  { name: 'Nothing leaves your network', desc: 'The gateway, the engines, the ledger and the console all run where you put them. The console in your browser talks to your gateway, not to us.' },
+  { name: 'The API your code already speaks', desc: 'OpenAI-compatible chat completions with one extra header for the session. Existing SDKs, agent frameworks and CLI tools keep working.' },
 ];
 
 /** Cost model for one 60-turn example task. A model, not a measurement. `share` is the bar width against the first row. */
@@ -46,7 +90,7 @@ export const MECHANISMS = [
   {
     name: 'Picks a model for each step',
     tags: ['Step routing', 'Small + large models'],
-    desc: 'Reading files, searching and running tests go to a small model. Planning and debugging go to a large one.',
+    desc: 'Three policies: cost, balanced and quality. Under balanced, chat and extraction go to a small model; code and reasoning go to a large one.',
   },
   {
     name: 'Hands the session over on a switch',
@@ -133,12 +177,18 @@ export const CERTIFICATIONS = ['SOC 2 Type II', 'ISO/IEC 42001'];
 /** The real status list. No dates. */
 export const STATUS = {
   done: [
+    'A working Inferstack gateway and CLI: session affinity, routing, cost ledger, failover, evals, metrics',
+    'Agents, tasks and background runs with per-agent budgets, in the gateway, the CLI and the Console',
+    'The Inferstack Console, live in the browser, with Linux and Android builds from the same code',
+    'Measured on a laptop: 87% less served cost on the second turn of a session',
     'A market study of 8.56M public posts and issues on inference',
-    'The architecture, and a 12-week plan with go / no-go gates',
     'A baseline on real agent logs: 88.5% of prompt tokens repeat',
+    'A shipped product: Clutch, a basketball recruiting platform',
   ],
   next: [
-    'A working prototype of the session layer. The build starts now.',
+    'GPU engines. The prototype runs on CPU with llama.cpp; vLLM and SGLang are next.',
+    'The model-switch handoff',
+    'Windows and macOS builds of the Console, and a signed Android release',
     'Paying customers',
     'An external benchmark. That’s what a pilot is for.',
   ],
@@ -182,6 +232,11 @@ export const NAV_MENUS: Record<string, { href: string; title: string; desc: stri
     { href: '/agents', title: 'Agent catalogue', desc: 'Support, billing, research, code review and onboarding.' },
     { href: '/agents#console', title: 'Agents console', desc: 'Plans, traces, approvals and receipts in one place.' },
     { href: '/agents#under-the-hood', title: 'Session layer', desc: 'Cache, step routing and model handoff.' },
+  ],
+  '/inferstack': [
+    { href: '/inferstack', title: 'Inferstack gateway', desc: 'Session-aware inference for agents on open models.' },
+    { href: '/inferstack#measured', title: 'What the prototype measures', desc: '87% less served cost on a cached turn.' },
+    { href: CONSOLE_HREF, title: 'Open the Console', desc: 'The live control panel, in your browser.' },
   ],
 };
 

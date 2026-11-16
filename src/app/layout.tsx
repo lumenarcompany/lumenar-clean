@@ -8,10 +8,11 @@ const mono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' });
 /* Lumenar Astra is caps and digits only: it sets the wordmark and nothing else. */
 const astra = localFont({ src: '../fonts/LumenarAstra.ttf', variable: '--font-astra', display: 'swap' });
 
-const host = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+/* Production lives on GitHub Pages at lumenar.company; Vercel previews keep their own host. */
+const host = process.env.SITE_HOST ?? process.env.VERCEL_PROJECT_PRODUCTION_URL ?? 'lumenar.company';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(host ? `https://${host}` : 'http://localhost:3300'),
+  metadataBase: new URL(`https://${host}`),
   title: { default: 'Lumenar · Agents that do the work, and show it', template: '%s · Lumenar' },
   description:
     'Lumenar builds AI agents and software on its own session layer. Every step has a receipt, and anything irreversible waits for a person.',

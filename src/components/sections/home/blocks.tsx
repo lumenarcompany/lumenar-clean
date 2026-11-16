@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Badge, Button, Chip, Human, Icon, Ring, Section, SectionHead, Tile, type IconName } from '@/components/ui';
-import { AGENT_FEATURES, AGENTS, HOME, METRICS, PRODUCTS, RUNS_ON } from '@/content/site';
+import { AGENT_FEATURES, AGENTS, CONSOLE_HREF, HOME, METRICS, PRODUCTS, PROTOTYPE, RUNS_ON } from '@/content/site';
 
 /** The runtimes the session layer runs on. Real, so it stands where a logo wall would. */
 export function RunsOn() {
@@ -138,6 +138,34 @@ export function SoftwareTeaser() {
 }
 
 /** The closing ask, on ink, with the turning silver star. */
+/** The Inferstack prototype: real measurements and the way into the live Console. */
+export function Prototype() {
+  return (
+    <Section id="inferstack">
+      <div className="flex flex-wrap items-end justify-between gap-6">
+        <SectionHead
+          eyebrow="Inferstack prototype"
+          title="The session layer is running."
+          lede="Inferstack is the gateway under our agents. On a laptop with no GPU, the second turn of a session already costs a fraction of the first."
+        />
+        <div className="flex flex-wrap gap-3">
+          <Button href={CONSOLE_HREF}>Open the Console</Button>
+          <Button href="/inferstack" variant="ghost" arrow>How it works</Button>
+        </div>
+      </div>
+      <ul className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
+        {PROTOTYPE.map((m) => (
+          <li key={m.value} className="grid content-start gap-4 bg-surface p-7 sm:p-9">
+            <span className="t-stat">{m.value}</span>
+            <span className="t-stat-label max-w-[300px]">{m.label}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="t-small mt-4">Measured on the Inferstack prototype: Qwen2.5 0.5B and 1.5B on llama.cpp, CPU only.</p>
+    </Section>
+  );
+}
+
 export function Closing() {
   const c = HOME.closing;
   return (
